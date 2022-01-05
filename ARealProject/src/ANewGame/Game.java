@@ -114,6 +114,70 @@ public class Game implements Cloneable{
 		this.p1.addPiece(new Piece(0, 16, kingType, s));
 		s[0] = 7;
 		this.p2.addPiece(new Piece(1, 16, kingType, s));
+		
+		this.updateBoard();
+		
 	}
+	
+	public void updateBoard() {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				this.board.spaces[i][j].status = 0;
+			}
+		}
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				for (int k = 0; k < this.p1.currentPieces.size(); k++) {
+					if (this.p1.currentPieces.get(k).location.equals(this.board.spaces[i][j].location)) {
+						this.board.spaces[i][j].status = 1;
+					}
+				}
+				for (int k = 0; k < this.p2.currentPieces.size(); k++) {
+					if (this.p2.currentPieces.get(k).location.equals(this.board.spaces[i][j].location)) {
+						this.board.spaces[i][j].status = 2;
+					}
+				}
+			}
+		}
+		return;
+	}
+	
+	public void movePiece(Piece p, int[] d) {
+		if (p.side == 0) {
+			if (this.board.spaces[d[0]][d[1]].status == 2) {
+				for (int i = 0; i < p2.currentPieces.size(); i++) {
+					if (p2.currentPieces.get(i).location.equals(d)) {
+						p2.currentPieces.remove(i);
+					}
+				}
+			}
+		}
+		else {
+			if(this.board.spaces[d[0]][d[1]].status == 1) {
+				for (int i = 0; i < p1.currentPieces.size(); i++) {
+					if (p1.currentPieces.get(i).location.equals(d)) {
+						p1.currentPieces.remove(i);
+					}
+				}
+			}
+		}
+		p.location[0] = d[0];
+		p.location[1] = d[1];
+		this.updateBoard();
+		return;
+	}
+	
+	
+	//CANT FINISH UNTIL LEGAL MOVES FUNCTION HAS BEEN COMPLETED
+	public void updateUnderAttack(Piece p) {
+		int[] l = p.location.clone();
+		if (p.side == 0) {
+			for (int i = 0; i < this.p2.currentPieces.size(); i++) {
+				
+			}
+		}
+	}
+	
+	
 
 }
