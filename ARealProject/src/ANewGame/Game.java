@@ -178,6 +178,144 @@ public class Game implements Cloneable{
 		}
 	}
 	
+	//LEGAL MOVES HELPER FUNCTIONS
+	public boolean inBoundsCheck(Piece p, int[] l) {
+		int[] d = {0,0};
+		d[0] = p.location[0] + l[0];
+		d[1] = p.location[1] + l[1];
+		if (((d[0] < 8) && (d[0] > -1))&& ((d[1] < 8) && (d[1] > -1))) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public boolean movingToAlliedPieceCheck(Piece p, int[] l) {
+		int[] d = {0,0};
+		d[0] = p.location[0] + l[0];
+		d[1] = p.location[1] + l[1];
+		if (this.board.spaces[d[0]][d[1]].status == p.side + 1) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	
+	public boolean movingThroughPiecesCheck(Piece p, int[] l) {
+		int[] d = {0,0};
+		d[0] = p.location[0] + l[0];
+		d[1] = p.location[1] + l[1];
+		if (p.type.pieceTypeID == 1) {
+			return true;
+		}
+		else {
+			int[] e = {0,0};
+			
+			//horizontal (right) moves
+			if ((l[0] == 0) && (l[1] > 0)) {
+				e[0] = p.location[0];
+				for (int i = 1; i < l[1]; i++) {
+					e[1] = p.location[1] + i;
+					if (this.board.spaces[e[0]][e[1]].status != 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			//horizontal (left) moves
+			else if ((l[0] == 0) && (l[1] < 0)) {
+				e[0] = p.location[0];
+				for (int i = -1; i > l[1]; i--) {
+					e[1] = p.location[1] + i;
+					if (this.board.spaces[e[0]][e[1]].status != 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			//vertical (up) moves
+			else if ((l[1] == 0) && (l[0] > 0)) {
+				e[1] = p.location[1];
+				for (int i = 1; i < l[0]; i++) {
+					e[0] = p.location[0] + i;
+					if (this.board.spaces[e[0]][e[1]].status != 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			//vertical (down) moves
+			else if ((l[1] == 0) && (l[0] < 0)) {
+				e[1] = p.location[1];
+				for (int i = -1; i > l[0]; i--) {
+					e[0] = p.location[0] + i;
+					if (this.board.spaces[e[0]][e[1]].status != 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			//diagonal (up right) moves
+			else if ((l[0] > 0) && (l[1] > 0)) {
+				for (int i = 1; i < l[1]; i++) {
+					e[0] = p.location[0] + i;
+					e[1] = p.location[1] + i;
+					if (this.board.spaces[e[0]][e[1]].status != 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			//diagonal (up left) moves
+			else if ((l[0] > 0) && (l[1] < 0)) {
+				for (int i = 1; i < l[0]; i++) {
+					e[0] = p.location[0] + i;
+					e[1] = p.location[1] - i;
+					if (this.board.spaces[e[0]][e[1]].status != 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			//diagonal (down left) moves
+			else if ((l[0] < 0) && (l[1] < 0)) {
+				for (int i = -1; i > l[0]; i--) {
+					e[0] = p.location[0] + i;
+					e[1] = p.location[1] + i;
+					if (this.board.spaces[e[0]][e[1]].status != 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			//diagonal (down right) moves
+			else if ((l[0] < 0) && (l[1] > 0)) {
+				for (int i = -1; i > l[0]; i--) {
+					e[0] = p.location[0] + i;
+					e[1] = p.location[1] - i;
+					if (this.board.spaces[e[0]][e[1]].status != 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			else {
+				return true;
+			}
+			
+		}
+	}
+	
 	
 
 }
