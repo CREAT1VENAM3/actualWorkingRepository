@@ -168,7 +168,7 @@ public class Game implements Cloneable{
 	}
 	
 	
-	//CANT FINISH UNTIL LEGAL MOVES FUNCTION HAS BEEN COMPLETED
+	//CANT FINISH UNTIL LEGAL MOVES FUNCTION HAS BEEN COMPLETED 
 	public void updateUnderAttack(Piece p) {
 		int[] l = p.location.clone();
 		if (p.side == 0) {
