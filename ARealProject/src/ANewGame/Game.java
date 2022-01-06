@@ -167,17 +167,6 @@ public class Game implements Cloneable{
 		return;
 	}
 	
-	
-	//CANT FINISH UNTIL LEGAL MOVES FUNCTION HAS BEEN COMPLETED 
-	public void updateUnderAttack(Piece p) {
-		int[] l = p.location.clone();
-		if (p.side == 0) {
-			for (int i = 0; i < this.p2.currentPieces.size(); i++) {
-				
-			}
-		}
-	}
-	
 	//LEGAL MOVES HELPER FUNCTIONS
 	public boolean inBoundsCheck(Piece p, int[] l) {
 		int[] d = {0,0};
@@ -314,6 +303,109 @@ public class Game implements Cloneable{
 			}
 			
 		}
+	}
+	
+	public boolean movingIntoCheckCheck(Piece p, int[] l) {
+		Game testGame = (Game)this.clone();
+		
+		if (p.side == 0) {
+			boolean pieceFound = false;
+			int i = 0;
+			while (pieceFound == false) {
+				if (testGame.p1.currentPieces.get(i).pieceID == p.pieceID) {
+					pieceFound = true;
+				}
+				else {
+					i++;
+				}
+			}
+			testGame.movePiece(testGame.p1.currentPieces.get(i), l);
+			testGame.updateInCheck(testGame.p1);
+			if (testGame.isInCheck(testGame.p1) == false) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			boolean pieceFound = false;
+			int i = 0;
+			while (pieceFound == false) {
+				if (testGame.p2.currentPieces.get(i).pieceID == p.pieceID) {
+					pieceFound = true;
+				}
+				else {
+					i++;
+				}
+			}
+			testGame.movePiece(testGame.p2.currentPieces.get(i), l);
+			testGame.updateInCheck(testGame.p2);
+			if (testGame.isInCheck(testGame.p2) == false) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	
+	public boolean isInCheck(Player p) {
+		return p.inCheck;
+	}
+	
+	public void updateInCheck (Player p) {
+		int[] l = {0,0};
+		int[] m = {0,0};
+		for (int i = 0; i < p.currentPieces.size(); i++) {
+			if (p.currentPieces.get(i).type.pieceTypeID == 5) {
+				l[0] = p.currentPieces.get(i).location[0];
+				l[1] = p.currentPieces.get(i).location[1];
+			}
+		}
+		if (p.playerID == 0) {
+			for (int i = 0; i < this.p2.currentPieces.size(); i++) {
+				for (int j = 0; j < this.p2.currentPieces.get(i).legalMoves.size(); j++) {
+					m[0] = this.p2.currentPieces.get(i).legalMoves.get(j)[0] + this.p2.currentPieces.get(i).location[0];
+					m[1] = this.p2.currentPieces.get(i).legalMoves.get(j)[1] + this.p2.currentPieces.get(i).location[1];
+					if ((m[0] == l[0]) && (m[1] == l[1])) {
+						p.inCheck = true;
+					}
+				}
+			}
+			return;
+		}
+		else {
+			for (int i = 0; i < this.p1.currentPieces.size(); i++) {
+				for (int j = 0; j < this.p1.currentPieces.get(i).legalMoves.size(); j++) {
+					m[0] = this.p1.currentPieces.get(i).legalMoves.get(j)[0] + this.p1.currentPieces.get(i).location[0];
+					m[1] = this.p1.currentPieces.get(i).legalMoves.get(j)[1] + this.p1.currentPieces.get(i).location[1];
+					if ((m[0] == l[0]) && (m[1] == l[1])) {
+						p.inCheck = true;
+					}
+				}
+			}
+			return;
+		}
+	}
+	
+	public void updateLegalMoves(Piece p) {
+		p.legalMoves.clear();
+		int[] m = {0,0};
+		for (int i = 0; i < p.legalMoves.size(); i++) {
+			m[0] = p.legalMoves.get(i)[0];
+			m[1] = p.legalMoves.get(i)[1];
+			if (this.inBoundsCheck(p, m)) {
+				if (this.movingToAlliedPieceCheck(p, m)) {
+					if (this.movingThroughPiecesCheck(p, m)) {
+						if (this.movingIntoCheckCheck(p, m)) {
+							p.legalMoves.add((int[])m.clone());
+						}
+					}
+				}
+			}
+		}
+		return;
 	}
 	
 	

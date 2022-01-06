@@ -1,4 +1,5 @@
 package ANewGame;
+import java.util.ArrayList;
 
 public class Piece implements Cloneable {
 	int side;
@@ -6,6 +7,7 @@ public class Piece implements Cloneable {
 	//black = 1
 	int[] location = new int[2];
 	int pieceID;
+	ArrayList<int[]> legalMoves = new ArrayList<int[]>();
 	
 	boolean hasMoved;
 	boolean underAttack;

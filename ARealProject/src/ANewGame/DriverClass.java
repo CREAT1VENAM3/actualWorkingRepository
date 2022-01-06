@@ -15,7 +15,7 @@ public class DriverClass {
 		//Rebuild Player - IN PROGRESS (WAITING ON OTHER CLASSES TO BE FINISHED)
 		//Build Basic Game Structure (including code to start a game) (For testing) - IN PROGRESS
 		//Build Move Function - DONE
-		//Rebuild Legal Move Checks (In Bounds, Not Moving Onto Allied Piece, Not Moving through pieces, not moving into check)
+		//Rebuild Legal Move Checks (In Bounds, Not Moving Onto Allied Piece, Not Moving through pieces, not moving into check) - DONE
 		//Create Visual Representation
 		//Build Game into playable state (actually taking turns, winning and losing, etc)
 		

@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 public class Player implements Cloneable{
 	int playerID;
+	boolean inCheck;
 	// White = 0
 	// Black = 1
 	ArrayList<Piece> currentPieces = new ArrayList<Piece>();
@@ -18,6 +19,7 @@ public class Player implements Cloneable{
 	
 	public Player(int p) {
 		this.playerID = p;
+		this.inCheck = false;
 	}
 	
 	public void addPiece(Piece p) {
