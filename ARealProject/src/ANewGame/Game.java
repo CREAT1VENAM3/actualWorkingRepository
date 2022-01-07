@@ -3,6 +3,8 @@ package ANewGame;
 public class Game implements Cloneable{
 	
 	int whoseTurn;
+	// 0 = white
+	// 1 = black
 	Board board;
 	Player p1;
 	Player p2;
@@ -128,12 +130,12 @@ public class Game implements Cloneable{
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				for (int k = 0; k < this.p1.currentPieces.size(); k++) {
-					if (this.p1.currentPieces.get(k).location.equals(this.board.spaces[i][j].location)) {
+					if ((this.p1.currentPieces.get(k).location[0] == this.board.spaces[i][j].location[0]) && (this.p1.currentPieces.get(k).location[1] == this.board.spaces[i][j].location[1])) {
 						this.board.spaces[i][j].status = 1;
 					}
 				}
 				for (int k = 0; k < this.p2.currentPieces.size(); k++) {
-					if (this.p2.currentPieces.get(k).location.equals(this.board.spaces[i][j].location)) {
+					if ((this.p2.currentPieces.get(k).location[0] == this.board.spaces[i][j].location[0]) && (this.p2.currentPieces.get(k).location[1] == this.board.spaces[i][j].location[1])) {
 						this.board.spaces[i][j].status = 2;
 					}
 				}
@@ -167,12 +169,61 @@ public class Game implements Cloneable{
 		return;
 	}
 	
+	public void attemptMove (Piece p, int[] d) {
+		int[] l = {0,0};
+		l[0] = d[0] - p.location[0];
+		l[1] = d[1] - p.location[1];
+		boolean pieceFound = false;
+		int i = 0;
+		if (p.side == 0) {
+			while (pieceFound == false) {
+				if (p.pieceID == this.p1.currentPieces.get(i).pieceID) {
+					pieceFound = true;
+				}
+				else {
+					i++;
+				}
+			}
+		}
+		else {
+			while (pieceFound == false) {
+				if (p.pieceID == this.p2.currentPieces.get(i).pieceID) {
+					pieceFound = true;
+				}
+				else {
+					i++;
+				}
+			}
+		}
+		if (p.side == 0) {
+			for (int j = 0; j < this.p1.currentPieces.get(i).legalMoves.size(); j++) {
+				if ((this.p1.currentPieces.get(i).legalMoves.get(j)[0] == l[0]) && (this.p1.currentPieces.get(i).legalMoves.get(j)[1] == l[1])) {
+					this.movePiece(p, d);
+					return;
+				}
+			}
+			System.out.println("Entered move is not legal move for piece selected. ");
+			return;
+		}
+		
+		else {
+			for (int j = 0; j < this.p2.currentPieces.get(i).legalMoves.size(); j++) {
+				if ((this.p2.currentPieces.get(i).legalMoves.get(j)[0] == l[0]) && (this.p2.currentPieces.get(i).legalMoves.get(j)[1] == l[1])) {
+					this.movePiece(p, d);
+					return;
+				}
+			}
+			System.out.println("Entered move is not legal move for piece selected. ");
+			return;
+		}
+	}
+	
 	//LEGAL MOVES HELPER FUNCTIONS
 	public boolean inBoundsCheck(Piece p, int[] l) {
 		int[] d = {0,0};
 		d[0] = p.location[0] + l[0];
 		d[1] = p.location[1] + l[1];
-		if (((d[0] < 8) && (d[0] > -1))&& ((d[1] < 8) && (d[1] > -1))) {
+		if (((d[0] < 8) && (d[0] > -1)) && ((d[1] < 8) && (d[1] > -1))) {
 			return true;
 		}
 		else {
@@ -307,6 +358,9 @@ public class Game implements Cloneable{
 	
 	public boolean movingIntoCheckCheck(Piece p, int[] l) {
 		Game testGame = (Game)this.clone();
+		int[] o = {0,0};
+		o[0] = p.location[0] + l[0];
+		o[1] = p.location[1] + l[1];
 		
 		if (p.side == 0) {
 			boolean pieceFound = false;
@@ -319,7 +373,7 @@ public class Game implements Cloneable{
 					i++;
 				}
 			}
-			testGame.movePiece(testGame.p1.currentPieces.get(i), l);
+			testGame.movePiece(testGame.p1.currentPieces.get(i), o);
 			testGame.updateInCheck(testGame.p1);
 			if (testGame.isInCheck(testGame.p1) == false) {
 				return true;
@@ -339,7 +393,7 @@ public class Game implements Cloneable{
 					i++;
 				}
 			}
-			testGame.movePiece(testGame.p2.currentPieces.get(i), l);
+			testGame.movePiece(testGame.p2.currentPieces.get(i), o);
 			testGame.updateInCheck(testGame.p2);
 			if (testGame.isInCheck(testGame.p2) == false) {
 				return true;
@@ -370,10 +424,10 @@ public class Game implements Cloneable{
 					m[1] = this.p2.currentPieces.get(i).legalMoves.get(j)[1] + this.p2.currentPieces.get(i).location[1];
 					if ((m[0] == l[0]) && (m[1] == l[1])) {
 						p.inCheck = true;
+						return;
 					}
 				}
 			}
-			return;
 		}
 		else {
 			for (int i = 0; i < this.p1.currentPieces.size(); i++) {
@@ -382,29 +436,142 @@ public class Game implements Cloneable{
 					m[1] = this.p1.currentPieces.get(i).legalMoves.get(j)[1] + this.p1.currentPieces.get(i).location[1];
 					if ((m[0] == l[0]) && (m[1] == l[1])) {
 						p.inCheck = true;
+						return;
 					}
 				}
 			}
-			return;
 		}
+		p.inCheck = false;
+		return;
 	}
 	
 	public void updateLegalMoves(Piece p) {
 		p.legalMoves.clear();
 		int[] m = {0,0};
-		for (int i = 0; i < p.legalMoves.size(); i++) {
-			m[0] = p.legalMoves.get(i)[0];
-			m[1] = p.legalMoves.get(i)[1];
+		for (int i = 0; i < p.type.potentialMoves.size(); i++) {
+			m[0] = p.type.potentialMoves.get(i)[0];
+			m[1] = p.type.potentialMoves.get(i)[1];
 			if (this.inBoundsCheck(p, m)) {
+				System.out.println("Passed in bounds check");
 				if (this.movingToAlliedPieceCheck(p, m)) {
+					System.out.println("Passed moving to allied piece check");
 					if (this.movingThroughPiecesCheck(p, m)) {
+						System.out.println("Passed moving through pieces check");
 						if (this.movingIntoCheckCheck(p, m)) {
+							System.out.println("Passed moving into check check");
 							p.legalMoves.add((int[])m.clone());
 						}
 					}
 				}
 			}
 		}
+		return;
+	}
+	
+	public void updateAllPiecesMoves() {
+		for (int i = 0; i < this.p1.currentPieces.size(); i++) {
+			this.updateLegalMoves(this.p1.currentPieces.get(i));
+		}
+		for (int i = 0; i < this.p2.currentPieces.size(); i++) {
+			this.updateLegalMoves(this.p2.currentPieces.get(i));
+		}
+	}
+	
+	public void printBoard() {
+		int[] l = {0,0};
+		String a = "";
+		for (int i = 7; i > -1; i--) {
+			for (int j = 0; j < 8; j++) {
+				if (this.board.spaces[i][j].status == 0) {
+					if (j < 7) {
+						System.out.print("[  ]");
+					}
+					else {
+						System.out.println("[  ]");
+					}
+				}
+				else if (this.board.spaces[i][j].status == 1) {
+					int k = 0;
+					boolean pieceFound = false;
+					l[0] = i;
+					l[1] = j;
+					while (pieceFound == false) {
+						if ((this.p1.currentPieces.get(k).location[0] == l[0]) && (this.p1.currentPieces.get(k).location[1] == l[1])) {
+							pieceFound = true;
+						}
+						else {
+							k++;
+						}
+					}
+					if (this.p1.currentPieces.get(k).type.pieceTypeID == 0) {
+						a = "P";
+					}
+					else if (this.p1.currentPieces.get(k).type.pieceTypeID == 1) {
+						a = "N";
+					}
+					else if (this.p1.currentPieces.get(k).type.pieceTypeID == 2) {
+						a = "B";
+					}
+					else if (this.p1.currentPieces.get(k).type.pieceTypeID == 3) {
+						a = "R";
+					}
+					else if (this.p1.currentPieces.get(k).type.pieceTypeID == 4) {
+						a = "Q";
+					}
+					else if (this.p1.currentPieces.get(k).type.pieceTypeID == 5) {
+						a = "K";
+					}
+					
+					if (j < 7) {
+						System.out.print("[W" + a + "]");
+					}
+					else {
+						System.out.println("[W" + a + "]");
+					}
+				}
+				
+				else if (this.board.spaces[i][j].status == 2) {
+					int k = 0;
+					boolean pieceFound = false;
+					l[0] = i;
+					l[1] = j;
+					while (pieceFound == false) {
+						if ((this.p2.currentPieces.get(k).location[0] == l[0]) && (this.p2.currentPieces.get(k).location[1] == l[1])) {
+							pieceFound = true;
+						}
+						else {
+							k++;
+						}
+					}
+					if (this.p2.currentPieces.get(k).type.pieceTypeID == 0) {
+						a = "P";
+					}
+					else if (this.p2.currentPieces.get(k).type.pieceTypeID == 1) {
+						a = "N";
+					}
+					else if (this.p2.currentPieces.get(k).type.pieceTypeID == 2) {
+						a = "B";
+					}
+					else if (this.p2.currentPieces.get(k).type.pieceTypeID == 3) {
+						a = "R";
+					}
+					else if (this.p2.currentPieces.get(k).type.pieceTypeID == 4) {
+						a = "Q";
+					}
+					else if (this.p2.currentPieces.get(k).type.pieceTypeID == 5) {
+						a = "K";
+					}
+					
+					if (j < 7) {
+						System.out.print("[B" + a + "]");
+					}
+					else {
+						System.out.println("[B" + a + "]");
+					}
+				}
+			}
+		}
+		System.out.println("");
 		return;
 	}
 	

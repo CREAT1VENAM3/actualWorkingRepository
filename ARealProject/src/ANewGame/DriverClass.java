@@ -4,7 +4,6 @@ public class DriverClass {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		System.out.println("Hello World");
 		
 		//TO BE DONE
 		
@@ -20,6 +19,20 @@ public class DriverClass {
 		//Build Game into playable state (actually taking turns, winning and losing, etc)
 		
 		Game newGame = new Game();
+		System.out.println("Player 1 in check: " + newGame.p1.inCheck);
+		newGame.printBoard();
+		newGame.updateAllPiecesMoves();
+		System.out.println("Player 1 in check: " + newGame.p1.inCheck);
+		int[] m = {2,1};
+		newGame.attemptMove(newGame.p1.currentPieces.get(1), m);
+		System.out.println("Player 1 in check: " + newGame.p1.inCheck);
+		System.out.println(newGame.p1.currentPieces.get(8).legalMoves.size());
+		newGame.updateLegalMoves(newGame.p1.currentPieces.get(8));
+		System.out.println("Player 1 in check: " + newGame.p1.inCheck);
+		System.out.println(newGame.p1.currentPieces.get(8).legalMoves.size());
+		System.out.println(newGame.p1.currentPieces.get(8).type.pieceTypeID);
+		System.out.println(newGame.p1.inCheck);
+		System.out.println("Player 1 in check: " + newGame.p1.inCheck);
 	}
 
 }
